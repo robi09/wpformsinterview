@@ -7,18 +7,34 @@ namespace WPFInterview;
 
 class Core {
 
+	// Params
 	public $endpoint;
+
+	// Dependencies
+	public $frequency;
 
 	public function __construct( $endpoint ) {
 
 		// Set up the plugin endpoint
 		$this->endpoint = $endpoint;
 
+		// Dependencies
+		$this->frequency = new Frequency();
+		$this->storage = new Storage();
+
+		// Hooks
 		$this->actions();
 
 	}
 
+	public function init() {
+		$this->register_shortcode();
+	}
+
 	public function actions() {
+
+		// Init hooks
+		add_action( 'init', [ $this, 'init'] );
 
 		// Load textdomain
 		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain'] );
@@ -49,7 +65,26 @@ class Core {
 	 * @return array
 	 */
 	public function rest_get_data_callback( \WP_REST_Request $request ) {
-		return $this->do_request();;
+		$return = '';
+
+		if( Frequency::is_passed() ) {
+			
+			// Do the request
+			$payload = $this->do_request();
+
+			// Save payload to db
+			Storage::Save( $payload );
+
+			// Update frequency time
+			Frequency::update();
+
+			// Return the request
+			$return = $payload;
+		} else {
+			$return = Storage::Get();
+		}
+
+		return $return;
 	}
 
 	public function do_request() {
@@ -96,15 +131,15 @@ class Core {
 
 	/**
 	 * Check if payload has the desired structure
-	 * @param  [type] $payload [description] ??
-	 * @return [type]          [description] ?? 
+	 * @param  obj $payload
+	 * @return boolean
 	 */
 	public function accept_payload( $payload ) {
-		return ( isset( $payload['title'] ) and isset( $payload['data'] ) );
+		return ( isset( $payload->title ) and isset( $payload->data ) );
 	}
 
 	public function register_shortcode() {
-
+		add_shortcode( 'ot_newsletter', [ $this, 'newsletter_callback' ] );
 	}
 
 	public function register_admin_page() {
@@ -120,6 +155,4 @@ class Core {
 		);
 
 	}
-
-
 }
