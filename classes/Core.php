@@ -49,11 +49,7 @@ class Core {
 	 * @return array
 	 */
 	public function rest_get_data_callback( \WP_REST_Request $request ) {
-
-		$payload = $this->do_request();
-
-		return $payload;
-
+		return $this->do_request();;
 	}
 
 	public function do_request() {
@@ -67,13 +63,35 @@ class Core {
 			$args = [];
 		}
 
+
+		// Run the request
 		$payload = wp_remote_get( $this->endpoint, $args );
 
+		// Check if request its succesfull
 		if( is_wp_error( $payload ) ) {
-			return $payload;
+			return [
+				'status' => false,
+				'content' => $payload->get_error_message()
+			];
 		} else {
-			return json_decode($payload['body']);
+
+			// Check if request is in the correct format
+			$decoded_payload = json_decode( $payload['body'] );
+
+			if( $this->accept_payload( $decoded_payload ) ) {
+				return [
+					'status' => true,
+					'content' => $decoded_payload
+				];
+			} else {
+				return [
+					'status' => false,
+					'content' => \WP_Error( 'wpfi_wrong_content', __( 'Incorect content structure received, please check your provider', 'wpfi' ) )
+				];
+			}
+			
 		}
+
 	}
 
 	/**
@@ -82,7 +100,7 @@ class Core {
 	 * @return [type]          [description] ?? 
 	 */
 	public function accept_payload( $payload ) {
-		// if( isset( $payload['title']))
+		return ( isset( $payload['title'] ) and isset( $payload['data'] ) );
 	}
 
 	public function register_shortcode() {

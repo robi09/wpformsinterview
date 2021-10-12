@@ -27,7 +27,7 @@ if( file_exists( WPFI_PATH . '/vendor/autoload.php') ) {
 	// Include autoload file
 	include_once( WPFI_PATH . '/vendor/autoload.php' );
 
-	$wpf_interview = new Core( 'asdas' );
+	$wpf_interview = new Core( 'https://miusage.com/v1/challenge/1/' );
 
 }
 
