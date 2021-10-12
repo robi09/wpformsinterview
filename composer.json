@@ -1,0 +1,12 @@
+{
+    "type": "project",
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "WPFInterview\\": ["classes"]
+        },
+        "files": [
+        ]
+    }
+}
