@@ -17,6 +17,7 @@ class ComposerStaticInit7f7fc5215c0a23723a9fc11693748601
         'WPFInterview\\' => 
         array (
             0 => __DIR__ . '/../..' . '/classes',
+            1 => __DIR__ . '/../..' . '/classes/cli',
         ),
     );
 

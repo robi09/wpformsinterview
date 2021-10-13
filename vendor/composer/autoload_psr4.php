@@ -6,5 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'WPFInterview\\' => array($baseDir . '/classes'),
+    'WPFInterview\\' => array($baseDir . '/classes', $baseDir . '/classes/cli'),
 );

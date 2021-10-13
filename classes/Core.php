@@ -25,6 +25,8 @@ class Core {
 		// Hooks
 		$this->actions();
 
+		new CliManagement();
+
 	}
 
 	public function init() {

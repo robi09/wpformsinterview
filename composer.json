@@ -4,7 +4,7 @@
     },
     "autoload": {
         "psr-4": {
-            "WPFInterview\\": ["classes"]
+            "WPFInterview\\": ["classes", "classes/cli"]
         },
         "files": [
         ]
