@@ -12,6 +12,8 @@ class Core {
 
 	// Dependencies
 	public $frequency;
+	public $storage;
+	public $cli;
 
 	public function __construct( $endpoint ) {
 
@@ -25,11 +27,12 @@ class Core {
 		// Hooks
 		$this->actions();
 
-		new CliManagement();
+		$this->cli = new CliManagement();
 
 	}
 
 	public function init() {
+		$this->cli->register_commands();
 		$this->register_shortcode();
 	}
 

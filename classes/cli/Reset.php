@@ -4,8 +4,13 @@ namespace WPFInterview;
 
 class Reset {
 	public function __construct() {}
+
     public function __invoke( $args ) {
-        \WP_CLI::success( 'test' );
+
+    	// Reset the frequency
+    	Frequency::force_reset();
+
+        \WP_CLI::success( __( 'Endpoint time limit has been reseted!', 'wpfi' ) );
     }
 
 }

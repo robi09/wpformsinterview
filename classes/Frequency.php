@@ -21,12 +21,12 @@ class Frequency {
 		get_option( 'wpfi_frequency_latest_update' );
 	}
 
+	public static function force_reset() {
+		update_option( 'wpfi_frequency_latest_update', null, false );
+	}
+
 	public static function is_passed( $last_hour = null) {
 		$latest_frequency = get_option( 'wpfi_frequency_latest_update' );
-
-		if ( $latest_frequency == null ) {
-			$latest_frequency = time();
-		}
 
 		return ( ( time() - intval( $latest_frequency ) ) >= ( 60 * 60 ) );
 	}

@@ -6,12 +6,11 @@
 namespace WPFInterview;
 
 class CliManagement {
-	public function __construct() {
-		$this->register_commands();
-	}
 
 	public function register_commands() {
-		\WP_CLI::add_command('wpfi reset', '\WPFInterview\Reset' );
+		if( class_exists( 'WP_CLI' ) ) {
+			\WP_CLI::add_command('wpfi reset', '\WPFInterview\Reset' );
+		}
 	}
 
 }
