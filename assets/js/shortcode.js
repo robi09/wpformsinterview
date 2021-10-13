@@ -3,49 +3,65 @@
  */
 jQuery(document).ready(function($) {
 
-	// // Check if we have the API details
-	// if( restApi.database && restApi.public_key ) {
+	$.ajax({
+		url: wpfiRestApi.root + '/get_data',
+		method: 'GET',
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('X-WP-Nonce', wpfiRestApi.nonce)
+		},
+		data: {}
+	}).done(function (response) {
+		if( response.status === true ) {
 
-	// 	// Init Recombee client
-	// 	var recombeeClient = new recombee.ApiClient( restApi.database, restApi.public_key );
+			// Add table title
+			$('.wpfi_shortcode_table .wpfi_shortcode_table_title').text( response.content.title );
 
-	// 	// Record view only on product single page
-	// 	if( $('body').hasClass( 'single-product' ) ) {
-	// 		recombeeClient.send(new recombee.AddDetailView( restApi.customer_id, restApi.product_id ),
-	// 		    (err, response) => {
-	// 		    	if( err != null ) {
-	// 		    		console.log('Record view. Recombee API error:');
-	// 		    		console.log(err);
-	// 		    	}
-	// 		    }
-	// 		);
-	// 	}
+			// Add table headers
+			$( response.content.data.headers ).each( function( x,y ) {
+				$('.wpfi_shortcode_table thead > tr').append('<th>'+y+'</th>');
+			} );
+			// Add table data
+			$(Object.keys(response.content.data.rows)).each( function( x,y ) {
+				var row_date = new Date(response.content.data.rows[y].date).toLocaleString()
 
-	// 	// Record a purchase when add to cart button is clicked on multiple places
-	// 	$( ".single_add_to_cart_button, .add_to_cart_button" ).on( 'click', function() {
-
-	// 		var final_product_id = '';
-	// 		var button_product_id = $(this).attr('data-product_id');
+				$('.wpfi_shortcode_table tbody').append('<tr>'
+					+'<td>'+response.content.data.rows[y].id+'</td>'
+					+'<td>'+response.content.data.rows[y].fname+'</td>'
+					+'<td>'+response.content.data.rows[y].lname+'</td>'
+					+'<td>'+response.content.data.rows[y].email+'</td>'
+					+'<td>'+row_date+'</td>'
+					+'</tr>');
+			} );
 			
-	// 		if(restApi.product_id) {
-	// 			final_product_id = restApi.product_id;
-	// 		} else {
-	// 			final_product_id = button_product_id;
-	// 		}
 
-	// 		recombeeClient.send(new recombee.AddCartAddition( restApi.customer_id, final_product_id ),
-	// 		    ( err, response ) => {
-	// 		    	if( err != null ) {
-	// 		    		console.log('Add to cart. Recombee API error:');
-	// 		    		console.log(err);
-	// 		    	}
-	// 		    }
-	// 		);
-	// 	} );
+		}
 
-	// } else {
-	// 	console.log('Recombee API error: API Details are missing');
-	// }
-	
+		// const keys = Object.keys(response);
+
+		// var products = '';
+
+		// Append products if we have a response from our API
+		// if( response ) {
+
+		// 	if( keys.length > 0 ) {
+
+		// 		// Build products markup
+		// 		for (const key of keys) {
+		// 			products += 
+		// 			'<li style="width: 18%; float: left; margin: 1%; list-style: none;"><a style="text-decoration: none;" href="'+response[key].permalink+'"><img src="'+response[key].image+'" />'+
+		// 			response[key].name +
+		// 			'</br><b style="font-size: 14px;"> '+response[key].html_price+'</b></a></li>';
+		// 		}
+
+		// 		// Append here
+		// 		wcr_recommendations.append( products );
+		// 	} else {
+		// 		wcr_recommendations.append( '<p>The recommended products are currently unavailable.</p>' );
+		// 	}
+			
+		// } else {
+		// 	wcr_recommendations.append( '<p>The recommended products are currently unavailable.</p>' );
+		// }
+	});
 
 });

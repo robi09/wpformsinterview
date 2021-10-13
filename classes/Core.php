@@ -42,9 +42,9 @@ class Core {
 		// Localize required data to be used in front-end JS
 		wp_add_inline_script(
 		'wpfi_interview', 
-		'var restApi = ' . json_encode( array( 
+		'var wpfiRestApi = ' . json_encode( array( 
 			'root' => esc_url_raw( rest_url() ) . 'wpfi/v1', 
-			'nonce' => wp_create_nonce( 'wp_rest_wpfi' ),
+			'nonce' => wp_create_nonce( 'wp_rest' ),
 		) ), 'before' );
 	}
 
@@ -167,7 +167,16 @@ class Core {
 	}
 
 	public function wpfi_table_shortcode_callback() {
-		include_once WPFI_PATH . 'templates/shortcode.php';
+		
+		// Load shortcode script only when shortcode its used
+		wp_enqueue_script( 'wpfi_interview' );
+
+		ob_start();
+			include_once WPFI_PATH . 'templates/shortcode.php';
+			$output = ob_get_contents();
+	    ob_end_clean();
+
+	    return $output;
 	}
 
 	public function register_admin_page() {
