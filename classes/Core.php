@@ -31,10 +31,34 @@ class Core {
 		$this->register_shortcode();
 	}
 
+	/**
+	 * Register or enqueue assets
+	 * @return void
+	 */
+	public function assets() {
+
+		wp_register_script( 'wpfi_interview', WPFI_URL . 'assets/js/shortcode.js', [ 'jquery' ], false, false 	);
+		
+		// Localize required data to be used in front-end JS
+		wp_add_inline_script(
+		'wpfi_interview', 
+		'var restApi = ' . json_encode( array( 
+			'root' => esc_url_raw( rest_url() ) . 'wpfi/v1', 
+			'nonce' => wp_create_nonce( 'wp_rest_wpfi' ),
+		) ), 'before' );
+	}
+
+	/**
+	 * Define action hooks
+	 * @return void
+	 */
 	public function actions() {
 
 		// Init hooks
 		add_action( 'init', [ $this, 'init'] );
+
+		// Load assets
+		add_action( 'wp_enqueue_scripts', 	[ $this, 'assets' ] );			
 
 		// Load textdomain
 		add_action( 'plugins_loaded', [ $this, 'load_plugin_textdomain'] );
@@ -47,7 +71,7 @@ class Core {
 	/**
 	 * Register custom made endpointrs
 	 * @hook rest_api_init
-	 * @return [type] [description]
+	 * @return void
 	 */
 	public function register_custom_endpoints() {
 
@@ -139,7 +163,11 @@ class Core {
 	}
 
 	public function register_shortcode() {
-		add_shortcode( 'ot_newsletter', [ $this, 'newsletter_callback' ] );
+		add_shortcode( 'wpfi_table', [ $this, 'wpfi_table_shortcode_callback' ] );
+	}
+
+	public function wpfi_table_shortcode_callback() {
+		include_once WPFI_PATH . 'templates/shortcode.php';
 	}
 
 	public function register_admin_page() {
