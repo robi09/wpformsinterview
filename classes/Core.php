@@ -31,6 +31,10 @@ class Core {
 
 	}
 
+	/**
+	 * Init hook callback
+	 * @return void
+	 */
 	public function init() {
 		$this->cli->register_commands();
 		$this->register_shortcode();
@@ -116,6 +120,10 @@ class Core {
 		return $return;
 	}
 
+	/**
+	 * Perform the request on the defined endpoint
+	 * @return array Array containing the status of the request together with the content received from the endpoint
+	 */
 	public function do_request() {
 
 		// Check if current website has ssl
@@ -167,10 +175,19 @@ class Core {
 		return ( isset( $payload->title ) and isset( $payload->data ) );
 	}
 
+	/**
+	 * Register the plugin shortcodes
+	 * @return void
+	 */
 	public function register_shortcode() {
 		add_shortcode( 'wpfi_table', [ $this, 'wpfi_table_shortcode_callback' ] );
 	}
 
+	/**
+	 * Shortcode callback
+	 * @shortcode wpfi_table
+	 * @return string HTML provided by template
+	 */
 	public function wpfi_table_shortcode_callback() {
 		
 		// Load shortcode script only when shortcode its used
@@ -188,6 +205,10 @@ class Core {
 
 	}
 
+	/**
+	 * Load plugin language files
+	 * @return void
+	 */
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
