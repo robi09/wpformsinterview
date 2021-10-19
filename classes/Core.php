@@ -75,7 +75,48 @@ class Core {
 		// Register custom endpoints
 		add_action( 'rest_api_init', [ $this, 'register_custom_endpoints' ] );
 
+		// Register custom pages
+        add_action( 'admin_menu', [ $this, 'custom_pages' ], 101 );
+
+	        add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
+
 	}
+
+	public function admin_scripts() {
+
+        if( \is_plugin_active( 'wp-mail-smtp/wp_mail_smtp.php' ) ) {
+			wp_register_style(
+				'wp-mail-smtp-admin',
+				wp_mail_smtp()->assets_url . '/css/smtp-admin.min.css',
+				false,
+				WPMS_PLUGIN_VER
+			);
+        }
+
+	}
+
+	/**
+     * Register custom pages
+     * 
+     * @hook 'admin_menu'
+     * @return void
+     */
+    public function custom_pages() {
+
+        // Versions page
+        add_menu_page(
+			__( 'WPF Interview', 'vox'),
+			'WPFI Table',
+			'manage_options',
+			'wpfi_table',
+	        [ $this, 'admin_page_callback' ]
+        );
+
+    }
+
+    public function admin_page_callback() {
+		include_once WPFI_PATH . 'templates/admin_page.php';
+    }
 
 	/**
 	 * Register custom made endpointrs

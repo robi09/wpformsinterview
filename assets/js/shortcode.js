@@ -1,6 +1,13 @@
 /**
- * Record Recombee data
+ * Plugin JavaScript responsible for doing the rest calls and attach the call to certain events
  */
+
+var wpfi = {
+	get_data: function() {
+		
+	}
+}
+
 jQuery(document).ready(function($) {
 
 	$.ajax({
@@ -32,36 +39,7 @@ jQuery(document).ready(function($) {
 					+'<td>'+row_date+'</td>'
 					+'</tr>');
 			} );
-			
-
 		}
-
-		// const keys = Object.keys(response);
-
-		// var products = '';
-
-		// Append products if we have a response from our API
-		// if( response ) {
-
-		// 	if( keys.length > 0 ) {
-
-		// 		// Build products markup
-		// 		for (const key of keys) {
-		// 			products += 
-		// 			'<li style="width: 18%; float: left; margin: 1%; list-style: none;"><a style="text-decoration: none;" href="'+response[key].permalink+'"><img src="'+response[key].image+'" />'+
-		// 			response[key].name +
-		// 			'</br><b style="font-size: 14px;"> '+response[key].html_price+'</b></a></li>';
-		// 		}
-
-		// 		// Append here
-		// 		wcr_recommendations.append( products );
-		// 	} else {
-		// 		wcr_recommendations.append( '<p>The recommended products are currently unavailable.</p>' );
-		// 	}
-			
-		// } else {
-		// 	wcr_recommendations.append( '<p>The recommended products are currently unavailable.</p>' );
-		// }
 	});
 
 });

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Teble shortcode template
+ * Table shortcode template
  */
 if ( ! defined( 'ABSPATH' ) )
    exit; // Exit if accessed directly
