@@ -13,6 +13,8 @@ class Core {
 	// Dependencies
 	public $frequency;
 	public $storage;
+
+	// Additional modules
 	public $cli;
 
 	public function __construct( $endpoint ) {
@@ -27,6 +29,7 @@ class Core {
 		// Hooks
 		$this->actions();
 
+		// Additional modules
 		$this->cli = new CliManagement();
 
 	}
@@ -46,15 +49,26 @@ class Core {
 	 */
 	public function assets() {
 
-		wp_register_script( 'wpfi_interview', WPFI_URL . 'assets/js/shortcode.js', [ 'jquery' ], false, false 	);
+		// Main javascript script
+		wp_register_script( 'wpfi_interview', WPFI_URL . 'assets/js/core.js', [ 'jquery' ], false, false );
 		
 		// Localize required data to be used in front-end JS
 		wp_add_inline_script(
 		'wpfi_interview', 
-		'var wpfiRestApi = ' . json_encode( array( 
-			'root' => esc_url_raw( rest_url() ) . 'wpfi/v1', 
-			'nonce' => wp_create_nonce( 'wp_rest' ),
-		) ), 'before' );
+		'var wpfiRestApi = ' . 
+			json_encode(
+				array( 
+					'root' => esc_url_raw( rest_url() ) . 'wpfi/v1', 
+					'nonce' => wp_create_nonce( 'wp_rest' ),
+				)
+			),
+		'before' );
+
+		// Shortcode JS
+		wp_add_inline_script(
+		'wpfi_interview', 
+		'jQuery(document).ready(function($) { wpfi.get_data(); });', 
+		'before' );
 	}
 
 	/**
@@ -78,19 +92,29 @@ class Core {
 		// Register custom pages
         add_action( 'admin_menu', [ $this, 'custom_pages' ], 101 );
 
-	        add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
+        // Register admin scripts
+	    add_action( 'admin_enqueue_scripts', [ $this, 'admin_scripts' ] );
 
 	}
 
+	/**
+	 * Register admin scripts
+	 * @return void
+	 */
 	public function admin_scripts() {
 
         if( \is_plugin_active( 'wp-mail-smtp/wp_mail_smtp.php' ) ) {
+
+        	// Load the WP Mail SMTP admin stylesheet
 			wp_register_style(
 				'wp-mail-smtp-admin',
 				wp_mail_smtp()->assets_url . '/css/smtp-admin.min.css',
 				false,
 				WPMS_PLUGIN_VER
 			);
+
+			// Load main assets of the plugin on the admin page
+        	$this->assets();
         }
 
 	}
@@ -114,17 +138,27 @@ class Core {
 
     }
 
+    /**
+     * Admin page callback function
+     * 
+     * @return void
+     */
     public function admin_page_callback() {
+		wp_enqueue_style( 'wp-mail-smtp-admin' );
+		wp_enqueue_script( 'wpfi_interview' );   
+
 		include_once WPFI_PATH . 'templates/admin_page.php';
     }
 
 	/**
-	 * Register custom made endpointrs
+	 * Register custom made endpoints
+	 * 
 	 * @hook rest_api_init
 	 * @return void
 	 */
 	public function register_custom_endpoints() {
 
+		// Endpoint responsable of getting data from remote endpoint
 		register_rest_route( 'wpfi/v1', '/get_data', array(
 			'methods'	=> \WP_REST_Server::READABLE,
 			'callback'	=> [ $this, 'rest_get_data_callback' ],
@@ -235,15 +269,19 @@ class Core {
 		wp_enqueue_script( 'wpfi_interview' );
 
 		ob_start();
-			include_once WPFI_PATH . 'templates/shortcode.php';
+			$this->get_table_markup();
 			$output = ob_get_contents();
 	    ob_end_clean();
 
 	    return $output;
 	}
 
-	public function register_admin_page() {
-
+	/**
+	 * Get the table markup/template
+	 * @return string - echo
+	 */
+	public function get_table_markup() {
+		include_once WPFI_PATH . 'templates/shortcode.php';
 	}
 
 	/**

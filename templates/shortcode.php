@@ -9,8 +9,9 @@ if ( ! defined( 'ABSPATH' ) )
 ?>
 
 <div class="wpfi_shortcode_table">
+	
 	<table>
-		<caption class="wpfi_shortcode_table_title">title</caption>
+		<h2 class="wpfi_shortcode_table_title"></h2>
 		<thead>
 			<tr>
 			</tr>
@@ -18,4 +19,10 @@ if ( ! defined( 'ABSPATH' ) )
 		<tbody>
 		</tbody>
 	</table>
+	<div class="_loader" style="display: none;">
+		<span class="message"><?php _e( 'Loading', 'wpfi' ); ?></span>
+		<span class="error" style="display: none;">
+			<?php _e( 'There has been an error, refresh the page and try again.', 'wpfi' ); ?>
+		</span>
+	</div>
 </div>
